@@ -108,7 +108,7 @@ func NewClient() (*manager.Uploader, error) {
 
 	uploader := manager.NewUploader(s3.NewFromConfig(cfg), func(u *manager.Uploader) {
 		u.Concurrency = 10
-		u.PartSize = 100 * 1024 * 1024 // 100MB per part
+		u.PartSize = 1000 * 1024 * 1024 // 1000MB per part
 		u.BufferProvider = manager.NewBufferedReadSeekerWriteToPool(100 * 1024 * 1024)
 	})
 

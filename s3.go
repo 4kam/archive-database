@@ -49,24 +49,12 @@ func (upl *Uploader) UploadFile(ctx context.Context, path string) error {
 	}
 	defer file.Close()
 
-	// limit, _ := getFileSize(path)
-	// bar := pb.Full.Start64(limit)
-	// barReader := bar.NewProxyReader(file)
-	// defer bar.Finish()
-
+	// TODO retry
 	if err := upl.Upload(ctx, file, key); err != nil {
 		return fmt.Errorf("failed to Upload(%q):%w", path, err)
 	}
 
 	return nil
-}
-
-func getFileSize(path string) (int64, error) {
-	info, err := os.Stat(path)
-	if err != nil {
-		return 0, err
-	}
-	return info.Size(), nil
 }
 
 func NewUploader(bucket string) (*Uploader, error) {

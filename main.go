@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -19,7 +18,7 @@ func main() {
 		log.Fatalf("Error NewUploader:%v", err)
 	}
 
-	files, err := ioutil.ReadDir(*source)
+	files, err := os.ReadDir(*source)
 	if err != nil {
 		log.Fatalf("Error ReadDir(%s):%v", *source, err)
 	}

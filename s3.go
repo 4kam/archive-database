@@ -32,7 +32,7 @@ func (upl *Uploader) Upload(ctx context.Context, r io.Reader, key string) error 
 		Body:   r,
 	})
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to Upload:%w", err)
 	}
 	return nil
 }
@@ -49,7 +49,6 @@ func (upl *Uploader) UploadFile(ctx context.Context, path string) error {
 	}
 	defer file.Close()
 
-	// TODO retry
 	if err := upl.Upload(ctx, file, key); err != nil {
 		return fmt.Errorf("failed to Upload(%q):%w", path, err)
 	}
@@ -88,15 +87,17 @@ func NewClient() (*manager.Uploader, error) {
 		*/
 		// config.WithRegion("ru-central1"),
 		// config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(key, secret, "")),
-		config.WithEndpointResolverWithOptions(customResolver))
+		config.WithEndpointResolverWithOptions(customResolver),
+		config.WithRetryMaxAttempts(10),
+	)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to LoadDefaultConfig:%w", err)
 	}
 
 	uploader := manager.NewUploader(s3.NewFromConfig(cfg), func(u *manager.Uploader) {
-		u.Concurrency = 10
-		u.PartSize = 1000 * 1024 * 1024 // 1000MB per part
+		u.Concurrency = 5
+		u.PartSize = 100 * 1024 * 1024 // 1000MB per part
 		u.BufferProvider = manager.NewBufferedReadSeekerWriteToPool(100 * 1024 * 1024)
 	})
 

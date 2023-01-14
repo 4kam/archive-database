@@ -34,6 +34,7 @@ func main() {
 			log.Printf("%s uploading", path)
 			if err := uploader.UploadFile(context.TODO(), path); err != nil {
 				log.Printf("failed to UploadFile(%s):%v", path, err)
+				return
 			}
 			log.Printf("%s uploaded", path)
 
